@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app"></div>
+	<script type="text/javascript" id="tpl">
+	    <div class="product">
+            <div>
+                <img src={#img#}>
+            </div>
+	    </div>
+	    <div class="content">
+            <div class="price">
+            	<span class="price-text">{#price#}</span>
+            	<span class="sum">{#sales#}人付款</span>
+            </div>
+	    </div>
+	// 命名空间 定义工具方法
+        var Util = {
+        	id : function(id){
+        		return document.getElementById(id);
+        	},
+        	ajax function(url,callback){
+        		var xhr = new XMLHttpRequest();
+        		// 订阅事件
+        		xhr.onreadystatechange = function(){
+        			if(xhr.readyState == 4){
+        				if(xhr.status == 200){
+        					// console.log(xhr.responseText);
+        					var data = JSON.parse(xhr.responseText)
+        					// console.log(data)
+        					// 数据处理
+        					callback&&callback(data);
+        				}
+        			}
+        		}
+        		// open方法
+        		xhr.open("get",url,true);
+        		// send方法
+        		xhr.send(null)
+        	}
+        }
+        // 获取模板
+        var tpl = Util.id("tpl").innerHTML;
+        console.log(tpl)
+        // 格式化模板字符串 匹配替换{#address#}
+        function formData(str,data){
+        	return str.replace(/\{#(\w+)#\}/g,function(match,$1){
+        		console.log(this);//this作用域window对象
+        		console.log(argument);//实参列表
+        		console.log(match);
+        		console.log($1);
+        		return data[$1]
+        	});
+        }
+        var html = '';
+        Util.ajax("url",function(data){
+        	// 有具体的项目具体怎么处理数据
+        	var res = data.list;
+        	for(var i=0,l=res.length;i<l;i++){
+        		// console.log(res[i])
+        		html += formData(tpl,res[i]);
+        	}
+        	Util.id("app").innerHTML = html
+        })
+	</script>
+	
+</body>
+</html>
